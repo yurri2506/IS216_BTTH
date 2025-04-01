@@ -1,4 +1,4 @@
-package IS216_BTTH.LAB2.BTTL;
+
 import java.util.Scanner;
 
 /*Hành tinh Babilon có 3 loại robot : Pedion, Zattacker và Carrier. Cả 3 loại
@@ -13,48 +13,120 @@ o Năng lượng tiêu thụ khi robot đi 1 quãng đường S km của mỗi l
 • Zattacker: M*S+P*P*S.
 • Carrier: M*S+4*E*S. */
 public class BTTL3_P2 {
-    private class Robot {
+
+    public static abstract class Robot {
         protected int M;
         public Robot(int M) {
             this.M = M;
         }
+        public abstract double energyConsumption(int S);
 
     }
-    private class Pedion extends Robot {
-        private int F = new java.util.Random().nextInt(5) + 1; // Generates a random number between 1 and 5
-        public Pedion(int M, int F) {
-            super(M);
-            this.F = F;
+    public static class Pedion extends Robot {
+        private int F;
+        public Pedion() {
+            super(20);
+            this.F = new java.util.Random().nextInt(5) + 1; // Generates a random number between 1 and 5
         }
+
+
+        @Override
         public double energyConsumption(int S) {
             return M*S + (F+1)*S/2;
         }
-    }
-    private class Zattacker extends Robot {
-        private int P = new java.util.Random().nextInt(11) + 20; // Generates a random number between 20 and 30
-        public Zattacker(int M, int P) {
-            super(M);
-            this.P = P;
+
+        @Override
+        public String toString (){
+            return "Pedion: M =" + M + ", F = " + F;
         }
+    }
+    public static class Zattacker extends Robot {
+        private int P;
+        public Zattacker() {
+            super(50);
+            this.P = new java.util.Random().nextInt(11) + 20; // Generates a random number between 20 and 30
+        }
+
+        @Override
         public double energyConsumption(int S) {
             return M*S + P*P*S;
         }
-    }
-    private class Carrier extends Robot {
-        private int E;
-        public Carrier(int M, int E) {
-            super(M);
-            this.E = E;
+
+        @Override
+        public String toString (){
+            return "Zattacker: M =" + M + ", P = " + P;
         }
+    }
+    public static class Carrier extends Robot {
+        private int E;
+        public Carrier() {
+            super(30);
+            this.E = new java.util.Random().nextInt(51) + 50; // Generates a random number between 50 and 100
+        }
+
+        @Override
         public double energyConsumption(int S) {
             return M*S + 4*E*S;
+        }
+
+        @Override
+        public String toString (){
+            return "Carrier: M =" + M + ", E = " + E;
         }
     }
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Nhap so luong robot: ");
-        int n = sc.nextInt();   
-        sc.nextLine();
+        System.out.println("Nhap so luong robot Pedion: ");
+        int A = sc.nextInt();   
+        System.out.println("Nhap so luong robot Zattacker: ");
+        int B = sc.nextInt();  
+        System.out.println("Nhap so luong robot Carrier: ");
+        int C = sc.nextInt();  
+        System.out.println("Nhap quang duong robot di: ");
+        int S = sc.nextInt();
+        Robot robots[] = new Robot[A + B +C];
+        int i = 0;
+        double totalEnergyPedion = 0;
+        double totalEnergyZattacker = 0;
+        double totalEnergyCarrier = 0;
 
+        while (i < (A + B +C)) {
+            if (i < A)
+            {
+                robots[i] = new Pedion();
+                totalEnergyPedion +=robots[i].energyConsumption(S);
+            }
+            else if ( i < (A+B) )
+            {
+                robots[i] = new Zattacker();
+                totalEnergyZattacker +=robots[i].energyConsumption(S);
+            }
+                else
+                {
+                    robots[i] = new Carrier();
+                    totalEnergyCarrier += robots[i].energyConsumption(S);
+
+                }
+            i++;
+        }
+
+
+        System.out.println("Thong tin cac loai robot va muc tieu thu la: ");
+        for (Robot robot:robots) {
+            System.out.println(robot + " Nang luong tieu thu: " + robot.energyConsumption(S));
+        }
+        sc.close();
+         // In tổng năng lượng tiêu thụ theo từng loại
+        System.out.println("\nTong nang luong tieu thu:");
+        System.out.println("Pedion: " + totalEnergyPedion);
+        System.out.println("Zattacker: " + totalEnergyZattacker);
+        System.out.println("Carrier: " + totalEnergyCarrier);
+
+        // Tìm loại robot tiêu thụ nhiều năng lượng nhất
+        double maxEnergy = Math.max(totalEnergyPedion, Math.max(totalEnergyZattacker, totalEnergyCarrier));
+        String maxEnergyType = (maxEnergy == totalEnergyPedion) ? "Pedion" :
+                               (maxEnergy == totalEnergyZattacker) ? "Zattacker" : "Carrier";
+
+        System.out.println("Robot tieu thu nang luong nhieu nhat la: " + maxEnergyType + " voi tong nang luong: " + maxEnergy);
     }
 }
